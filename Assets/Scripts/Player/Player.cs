@@ -1,15 +1,17 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Mover), typeof(Health))]
+[RequireComponent(typeof(Mover), typeof(Health), typeof(Rigidbody))]
 public class Player : MonoBehaviour
 {
     [SerializeField] private InputReader _inputReader;
 
     private Mover _mover;
+    private Rigidbody _rigidbody;
 
     private void Awake()
     {
         _mover = GetComponent<Mover>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
     private void OnEnable()
@@ -48,9 +50,9 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float damage)
-    { 
-        
+    public void AddExternalForce(float force, Vector3 direction)
+    {
+        _rigidbody.AddForce(direction);
     }
 
     private void OnJumpButtonDown()
