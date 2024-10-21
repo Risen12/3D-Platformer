@@ -1,18 +1,55 @@
 using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+public class BalanceTrap : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private Coroutine _returnRotateCoroutine;
+    private WaitForSeconds _returnRotate;
+    private float _returnRotateTime;
+    private float _timeToReturnRotate;
+    private Rigidbody _rigidbody;
+
+    private void Awake()
     {
-        
+        _returnRotateTime = 0.05f;
+        _returnRotate = new WaitForSeconds(_returnRotateTime);
+        _timeToReturnRotate = 4f;
+
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnCollisionEnter(Collision collision)
     {
-        
+        if (_returnRotateCoroutine != null)
+            StopCoroutine(_returnRotateCoroutine);
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        ReturnToStartRotation();
+    }
+
+    private void ReturnToStartRotation()
+    {
+        _returnRotateCoroutine = StartCoroutine(RotateCoroutine());
+    }
+
+    private IEnumerator RotateCoroutine()
+    {
+        _rigidbody.angularVelocity = Vector3.zero;
+        float currentTime = 0f;
+        float finishTime = 1f;
+
+        while (currentTime < finishTime)
+        {
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.identity, currentTime);
+            currentTime += Time.deltaTime / _timeToReturnRotate;
+
+            yield return _returnRotate;
+        }
+
+        transform.rotation = Quaternion.identity;
     }
 }

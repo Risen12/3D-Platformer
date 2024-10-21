@@ -7,4 +7,5 @@ public static class PlayerData
     public static readonly string WalkRightParameterName = "IsWalkingRight";
     public static readonly string WalkBackwardsParameterName = "IsWalkingBack";
     public static readonly string IsGroundParameterName = "IsGrounded";
+    public static readonly string DamagedParameterName = "Damaged";
 }

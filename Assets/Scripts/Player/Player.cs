@@ -7,21 +7,25 @@ public class Player : MonoBehaviour
 
     private Mover _mover;
     private Rigidbody _rigidbody;
+    private Health _health;
 
     private void Awake()
     {
         _mover = GetComponent<Mover>();
         _rigidbody = GetComponent<Rigidbody>();
+        _health = GetComponent<Health>();
     }
 
     private void OnEnable()
     {
         _inputReader.JumpButtonDown += OnJumpButtonDown;
+        _health.Died += OnDied;
     }
 
     private void OnDisable()
     {
         _inputReader.JumpButtonDown -= OnJumpButtonDown;
+        _health.Died -= OnDied;
     }
 
     private void FixedUpdate()
@@ -50,13 +54,18 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void AddExternalForce(float force, Vector3 direction)
+    public void AddExternalForce(Vector3 windDirection)
     {
-        _rigidbody.AddForce(direction);
+        _rigidbody.AddForce(windDirection);
     }
 
     private void OnJumpButtonDown()
     {
         _mover.Jump();
+    }
+
+    private void OnDied()
+    {
+        _mover.Stop();
     }
 }

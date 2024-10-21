@@ -20,6 +20,7 @@ public class BasicTrap : MonoBehaviour
     private Color _preActiveColor;
     private Color _activeColor;
     private Color _defaultColor;
+    private Health _target;
 
     private void Awake()
     {
@@ -40,8 +41,9 @@ public class BasicTrap : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.TryGetComponent(out Player player))
+        if (collision.gameObject.TryGetComponent(out Health health))
         {
+            _target = health;
             if (_isActive == false)
                 Activate();
         }
@@ -78,26 +80,15 @@ public class BasicTrap : MonoBehaviour
         {
             _renderer.material.color = _preActiveColor;
 
-            Debug.Log("оранжевый");
-
             yield return _preActiveState;
 
             _renderer.material.color = _activeColor;
-            Debug.Log("красный");
 
-            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, Quaternion.identity, _playerLayerMask);
-
-            if (colliders.Length > 0)
-            {
-                if (colliders.First().TryGetComponent(out Health health))
-                {
-                    health.TakeDamage(_damage);
-                }
-            }
+            _target.TakeDamage(_damage);
 
             yield return _activeState;
 
-            _renderer.material.color = _preActiveColor;
+            _renderer.material.color = _defaultColor;
 
             yield return _reloadState;
         }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Health : MonoBehaviour
@@ -6,21 +7,30 @@ public class Health : MonoBehaviour
 
     private float _health;
 
+    public event Action Damaged;
+    public event Action<int> HealthChanged;
+    public event Action Died;
+
+    public float MaxHealth => _maxHealth;
+
     private void Awake()
     {
         _health = _maxHealth;
     }
 
-    public void TakeDamage(float damage)
-    { 
-        _health -= damage;
-
-        if (_health <= 0)
-            Die();
+    private void Start()
+    {
+        HealthChanged?.Invoke((int)_health);
     }
 
-    private void Die()
-    { 
-        
+    public void TakeDamage(float damage)
+    {
+        _health -= damage;
+
+        Damaged?.Invoke();
+        HealthChanged?.Invoke((int)_health);
+
+        if (_health <= 0)
+            Died?.Invoke();
     }
 }

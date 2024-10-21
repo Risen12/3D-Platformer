@@ -1,17 +1,19 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Mover), typeof(Animator))]
+[RequireComponent(typeof(Mover), typeof(Animator), typeof(Health))]
 public class PlayerAnimatorController : MonoBehaviour
 {
     [SerializeField] private GroundVerifier _groundVerifier;
 
     private Mover _mover;
     private Animator _animator;
+    private Health _health;
 
     private void Awake()
     {
         _mover = GetComponent<Mover>();
         _animator = GetComponent<Animator>();
+        _health = GetComponent<Health>();
     }
 
     private void OnEnable()
@@ -22,6 +24,8 @@ public class PlayerAnimatorController : MonoBehaviour
         _mover.MoveBackwardsStateChanged += OnMoveBackwardsStateChanged;
 
         _groundVerifier.GroundStateChanged += OnGroundStateChanged;
+
+        _health.Damaged += OnDamaged;
     }
 
     private void OnDisable()
@@ -32,6 +36,8 @@ public class PlayerAnimatorController : MonoBehaviour
         _mover.MoveBackwardsStateChanged -= OnMoveBackwardsStateChanged;
 
         _groundVerifier.GroundStateChanged -= OnGroundStateChanged;
+
+        _health.Damaged -= OnDamaged;
     }
 
     private void OnJumped()
@@ -57,5 +63,10 @@ public class PlayerAnimatorController : MonoBehaviour
     private void OnMoveBackwardsStateChanged(bool state)
     {
         _animator.SetBool(PlayerData.WalkBackwardsParameterName, state);
+    }
+
+    private void OnDamaged()
+    {
+        _animator.SetTrigger(PlayerData.DamagedParameterName);
     }
 }

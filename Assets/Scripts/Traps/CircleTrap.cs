@@ -11,8 +11,8 @@ public class CircleTrap : MonoBehaviour
         _rotateDirection = new Vector3(0, _rotatePower, 0);
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        transform.Rotate(_rotateDirection);
+        transform.Rotate(_rotateDirection * Time.deltaTime);
     }
 }

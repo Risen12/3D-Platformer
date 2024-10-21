@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class WindTrap : MonoBehaviour
@@ -7,14 +8,22 @@ public class WindTrap : MonoBehaviour
 
     private Player _target;
     private bool _isActive;
+    private float _windChangeDelay;
+    private WaitForSeconds _windChangeDirection;
+
+    private void Awake()
+    {
+        _windChangeDelay = 2f;
+        _windChangeDirection = new WaitForSeconds(_windChangeDelay);
+
+        StartCoroutine(ChangeDirection());
+    }
 
     private void FixedUpdate()
     {
         if (_isActive)
         {
-            Debug.Log(_target);
-            Debug.Log("Несу игрока");
-            _target.AddExternalForce(_windPower, _windDirection);
+            _target.AddExternalForce(_windDirection * _windPower);
         }
     }
 
@@ -43,5 +52,27 @@ public class WindTrap : MonoBehaviour
     private void Deactivate()
     {
         _isActive = false;
+    }
+
+    private IEnumerator ChangeDirection()
+    {
+        float minMultiplyer = -1;
+        float maxMultiplyer = 1;
+
+        while (gameObject.activeInHierarchy)
+        {
+            yield return _windChangeDirection;
+
+            float multiplyer = Random.Range(minMultiplyer, maxMultiplyer);
+
+            if (multiplyer < 0)
+            {
+                _windDirection *= minMultiplyer;
+            }
+            else
+            {
+                _windDirection *= maxMultiplyer;
+            }
+        }
     }
 }
